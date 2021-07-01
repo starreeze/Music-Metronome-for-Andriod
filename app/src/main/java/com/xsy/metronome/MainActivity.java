@@ -2,12 +2,16 @@ package com.xsy.metronome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Pair;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.os.Bundle;
 
@@ -73,7 +77,7 @@ class PlayEvent extends TimerTask {
 }
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     MediaPlayer ding0, da0, ding1, da1;
     Timer timer = null;
     boolean running = false;
@@ -87,13 +91,15 @@ public class MainActivity extends AppCompatActivity {
         da0 = MediaPlayer.create(getApplicationContext(), R.raw.da);
         ding1 = MediaPlayer.create(getApplicationContext(), R.raw.ding);
         da1 = MediaPlayer.create(getApplicationContext(), R.raw.da);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(this);
         Pair<Integer, Integer> info = load();
         int velocity = info.first;
-        int rhyme = info.second;
+        int meter = info.second;
         EditText editText = (EditText) findViewById(R.id.velocity);
         editText.setText(String.valueOf(velocity));
-        editText = (EditText) findViewById(R.id.rhyme);
-        editText.setText(String.valueOf(rhyme));
+        SeekBar seekbar = (SeekBar) findViewById(R.id.meter);
+        seekbar.setProgress(meter);
     }
 
     @Override
@@ -103,6 +109,12 @@ public class MainActivity extends AppCompatActivity {
         ding1.release();
         da0.release();
         da1.release();
+        EditText editText = (EditText) findViewById(R.id.velocity);
+        String message = editText.getText().toString();
+        int velocity = Integer.parseInt(message);
+        SeekBar seekbar = (SeekBar) findViewById(R.id.meter);
+        int meter = seekbar.getProgress();
+        save(velocity, meter);
     }
 
     public void toggle_button(View view) {
@@ -170,11 +182,10 @@ public class MainActivity extends AppCompatActivity {
         EditText editText = (EditText) findViewById(R.id.velocity);
         String message = editText.getText().toString();
         int velocity = Integer.parseInt(message);
-        editText = (EditText) findViewById(R.id.rhyme);
-        message = editText.getText().toString();
-        int rhyme = Integer.parseInt(message);
-        save(velocity, rhyme);
-        play(velocity, rhyme);
+        SeekBar seekbar = (SeekBar) findViewById(R.id.meter);
+        int meter = seekbar.getProgress();
+        save(velocity, meter);
+        play(velocity, meter);
         Button button = (Button) findViewById(R.id.button);
         button.setText(R.string.stop);
         running = true;
@@ -196,5 +207,30 @@ public class MainActivity extends AppCompatActivity {
         Button button = (Button) findViewById(R.id.button);
         button.setText(R.string.start);
         running = false;
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        String preset = parent.getItemAtPosition(pos).toString();
+        int tempo;
+        switch(preset) {
+            case "Grave":   tempo = 40; break;
+            case "Largo":   tempo = 46; break;
+            case "Adagio":   tempo = 56; break;
+            case "Larghetto":   tempo = 60; break;
+            case "Andante":   tempo = 66; break;
+            case "Andantino":   tempo = 69; break;
+            case "Moderato":   tempo = 88; break;
+            case "Allegretto":   tempo = 108; break;
+            case "Allegro":   tempo = 132; break;
+            case "Vivace":   tempo = 152; break;
+            case "Presto":   tempo = 184; break;
+            case "Prestissimo":   tempo = 208; break;
+            default:    return;
+        }
+        EditText editText = (EditText) findViewById(R.id.velocity);
+        editText.setText(String.valueOf(tempo));
+    }
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 }
