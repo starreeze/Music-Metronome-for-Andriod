@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="preset_tempo">
+        <item>Select...</item>
+        <item>Grave</item>
+        <item>Largo</item>
+        <item>Adagio</item>
+        <item>Larghetto</item>
+        <item>Andante</item>
+        <item>Andantino</item>
+        <item>Moderato</item>
+        <item>Allegretto</item>
+        <item>Allegro</item>
+        <item>Vivace</item>
+        <item>Presto</item>
+        <item>Prestissimo</item>
+    </string-array>
+</resources>
